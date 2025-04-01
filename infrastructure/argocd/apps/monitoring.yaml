@@ -18,7 +18,7 @@ spec:
     chart: kube-prometheus-stack
     # The version of the chart to use (optional, but recommended for stability)
     # Find the latest version suitable for you, e.g., check Artifact Hub
-    targetRevision: 58.2.1 # Example version, please update as needed
+    targetRevision: 70.4.1 # Example version, please update as needed
 
     helm:
       # Reference the values file within your Git repository
