@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default # Use the default Argo CD project
   source:
-    repoURL: https://github.com/devrishidas/homelab.git # Replace with your actual Git repo URL
+    repoURL: https://github.com/dasdevrishi/homelab.git
     targetRevision: HEAD                               # Track the latest commit on the main branch
     path: infrastructure/argocd/apps                    # Point to the directory containing child App definitions
   destination:
