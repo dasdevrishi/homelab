@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  # This Application resource itself lives in the argocd namespace
+  name: monitoring
+  namespace: argocd
+  # Ensures this app is deleted cleanly when the root app is deleted
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  # Source of the Helm chart for kube-prometheus-stack
+  source:
+    # The Helm repository where the chart is located
+    repoURL: https://prometheus-community.github.io/helm-charts
+    # The name of the chart
+    chart: kube-prometheus-stack
+    # The version of the chart to use (optional, but recommended for stability)
+    # Find the latest version suitable for you, e.g., check Artifact Hub
+    targetRevision: 58.2.1 # Example version, please update as needed
+
+    helm:
+      # Reference the values file within your Git repository
+      valueFiles:
+        # Path relative to the root of the Git repository
+        - $values/monitoring/prometheus-stack/values.yaml
+
+  # Destination where the monitoring stack will be deployed
+  destination:
+    server: https://kubernetes.default.svc # Target the same cluster
+    namespace: monitoring                 # Deploy into the 'monitoring' namespace
+
+  # Sync policy: Automatic sync, prune resources, self-heal
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      # Ensure the 'monitoring' namespace is created if it doesn't exist
+      - CreateNamespace=true
+      # Allow deletion of resources when Helm chart changes require it
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true 
