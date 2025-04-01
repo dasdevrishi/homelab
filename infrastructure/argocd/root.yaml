@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-applications # Name of this root application
+  namespace: argocd      # Must be in the argocd namespace
+  finalizers:
+    # Ensures that child resources are deleted before this App is deleted
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default # Use the default Argo CD project
+  source:
+    repoURL: https://github.com/devrishidas/homelab.git # Replace with your actual Git repo URL
+    targetRevision: HEAD                               # Track the latest commit on the main branch
+    path: infrastructure/argocd/apps                    # Point to the directory containing child App definitions
+  destination:
+    server: https://kubernetes.default.svc # Deploy Application resources to the same cluster Argo CD is in
+    namespace: argocd                     # Deploy the child Apps *into* the argocd namespace
+  syncPolicy:
+    automated:
+      prune: true    # Delete child Apps if their definition is removed from Git
+      selfHeal: true # Automatically resync if the live state drifts from Git
+    syncOptions:
+      - CreateNamespace=true # Automatically create namespaces if defined in child Apps/manifests 

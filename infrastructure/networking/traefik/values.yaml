@@ -1,0 +1,52 @@
+# Traefik Helm Chart Values for Homelab (k3d)
+# Documentation: https://doc.traefik.io/traefik/getting-started/install-traefik/#use-the-helm-chart
+
+deployment:
+  kind: Deployment # Use Deployment instead of DaemonSet for flexibility in smaller clusters
+  replicas: 1
+
+# Configure ports to be exposed via k3d's service load balancer
+# These map to the host ports defined in k3d cluster.yaml (8080 -> 80, 8443 -> 443)
+ports:
+  web:
+    port: 8000       # Internal container port for Traefik web entrypoint
+    expose: true     # Expose this entrypoint
+    exposedPort: 80  # The port the service will listen on within the cluster (maps to host:8080)
+  websecure:
+    port: 8443       # Internal container port for Traefik websecure entrypoint
+    expose: true     # Expose this entrypoint
+    exposedPort: 443 # The port the service will listen on within the cluster (maps to host:8443)
+    tls:
+      enabled: false # Disable built-in TLS for now; manage certs via cert-manager or IngressRoute later
+
+# Enable the Traefik dashboard
+# Access it via port-forward or create an IngressRoute later
+# WARNING: Insecure mode exposes the dashboard without authentication. Secure this in production.
+dashboard:
+  enabled: true
+  insecure: true # Set to false and create an IngressRoute with middleware for secure access
+
+# RBAC is required for Traefik to function correctly
+rbac:
+  enabled: true
+
+# Service configuration
+service:
+  type: LoadBalancer # k3d provides a service load balancer that maps cluster ports to host ports
+  spec:
+    # externalTrafficPolicy: Cluster # Default is usually fine for k3d
+
+# Persistence (Optional: Enable if using Let's Encrypt for ACME challenges/certificates)
+# persistence:
+#   enabled: false
+#   name: traefik-data
+#   storageClass: "local-path" # Use the storage class defined in local-path-storage.yaml
+#   accessMode: ReadWriteOnce
+#   size: 128Mi
+#   path: /data
+
+# Additional arguments for Traefik if needed
+# additionalArguments:
+#   - "--log.level=INFO"
+#   - "--accesslog=true"
+#   - "--providers.kubernetescrd.ingressclass=traefik-internal" # Example: Define a custom ingress class

@@ -1,0 +1,6 @@
+{
+    "yaml.schemas": {
+        "file:///Users/devrishidas/.vscode/extensions/atlassian.atlascode-3.4.21/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml",
+        "https://raw.githubusercontent.com/rancher/k3d/main/pkg/config/config.versions.schema.json": "file:///Users/devrishidas/Desktop/homelab/infrastructure/k3d/cluster.yaml"
+    }
+}
