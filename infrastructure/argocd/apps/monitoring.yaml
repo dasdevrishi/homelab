@@ -24,7 +24,7 @@ spec:
       # Reference the values file within your Git repository
       valueFiles:
         # Path relative to the root of the Git repository
-        - monitoring/prometheus-stack/values.yaml
+        - $values/monitoring/prometheus-stack/values.yaml
 
   # Destination where the monitoring stack will be deployed
   destination:
