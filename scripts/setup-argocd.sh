@@ -19,7 +19,7 @@ kubectl rollout status deployment argocd-server -n argocd --timeout=300s
 
 # Patch ArgoCD server to use NodePort (for k3d)
 echo "Exposing ArgoCD service via NodePort..."
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort", "ports": [{"port": 443, "targetPort": 8080, "nodePort": 30080, "protocol": "TCP", "name": "https"}]}}'
 
 # Get ArgoCD admin password
 echo "Fetching ArgoCD admin password..."
