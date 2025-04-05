@@ -21,10 +21,59 @@ spec:
     targetRevision: 70.4.1 # Example version, please update as needed
 
     helm:
-      # Reference the values file within your Git repository
-      valueFiles:
-        # Path relative to the root of the Git repository
-        - values/values.yaml
+      values: |
+        prometheus:
+          prometheusSpec:
+            retention: 30d
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 100m
+              limits:
+                memory: 512Mi
+                cpu: 500m
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 5Gi
+
+        alertmanager:
+          alertmanagerSpec:
+            resources:
+              requests:
+                memory: 64Mi
+                cpu: 50m
+              limits:
+                memory: 128Mi
+                cpu: 100m
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 1Gi
+
+        grafana:
+          persistence:
+            enabled: true
+            size: 2Gi
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 200m
+          adminPassword: "Dev5rishi"
+          service:
+            type: LoadBalancer
+            port: 80
+            targetPort: 3000
+            nodePort: 30080
 
   # Destination where the monitoring stack will be deployed
   destination:
