@@ -10,21 +10,18 @@ ports:
   - port: 8080:80
     nodeFilters:
       - loadbalancer
-  - port: 8443:30443
-    nodeFilters:
-      - loadbalancer
-  - port: 8444:30080
+  - port: 8443:443
     nodeFilters:
       - loadbalancer
 options:
   k3d:
     wait: true
     timeout: "60s"
-  k3s:
-    extraArgs:
-      - arg: --disable=traefik
-        nodeFilters:
-          - server:*
+  # k3s:
+  #   extraArgs:
+  #     - arg: --disable=traefik
+  #       nodeFilters:
+  #         - server:*
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: true
