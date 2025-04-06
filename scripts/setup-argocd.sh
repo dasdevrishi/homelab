@@ -17,22 +17,22 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 echo "Waiting for ArgoCD to be ready..."
 kubectl rollout status deployment argocd-server -n argocd --timeout=300s
 
-# Patch ArgoCD server to use NodePort (for k3d)
-echo "Exposing ArgoCD service via NodePort..."
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort", "ports": [{"port": 443, "targetPort": 8080, "nodePort": 30080, "protocol": "TCP", "name": "https"}]}}'
-
 # Get ArgoCD admin password
 echo "Fetching ArgoCD admin password..."
 ARGOCD_PASSWORD=$(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode)
 
 # Get ArgoCD NodePort
-ARGOCD_PORT=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.spec.ports[0].nodePort}')
+#ARGOCD_PORT=$(kubectl get svc argocd-server -n argocd -o jsonpath='{.spec.ports[0].nodePort}')
 
 # Display ArgoCD access information
 echo "ArgoCD has been installed!"
-echo "Access the ArgoCD UI: https://localhost:${ARGOCD_PORT}"
+echo "Access the ArgoCD UI: https://localhost:8080"
 echo "Admin username: admin"
 echo "Admin password: ${ARGOCD_PASSWORD}"
 
 echo "Login via CLI with:"
-echo "  argocd login localhost:${ARGOCD_PORT} --username admin --password ${ARGOCD_PASSWORD} --insecure"
+echo "  argocd login localhost:8080 --username admin --password ${ARGOCD_PASSWORD} --insecure"
+
+# Forward the ArgoCD server port to access the UI
+echo "Forward the ArgoCD server port to access the UI"
+kubectl port-forward svc/argocd-server -n argocd 8080:443
