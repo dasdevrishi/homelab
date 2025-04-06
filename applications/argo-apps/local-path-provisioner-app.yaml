@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default # Use the default Argo CD project for now
   source:
-    repoURL: https://github.com/YOUR_USERNAME/YOUR_HOMELAB_REPO.git # <-- IMPORTANT: Replace with your actual Git repo URL
+    repoURL: https://github.com/dasdevrishi/homelab.git
     targetRevision: HEAD # Track the HEAD of the main/master branch
     path: infrastructure/storage # Point to the directory containing the manifest
     # We are using a raw manifest, not Helm or Kustomize
