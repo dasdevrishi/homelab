@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: local-path-provisioner
+  namespace: argocd # Deploy this Application resource into the argocd namespace
+  finalizers:
+    # Ensure resources are cleaned up when the Application is deleted
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default # Use the default Argo CD project for now
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/YOUR_HOMELAB_REPO.git # <-- IMPORTANT: Replace with your actual Git repo URL
+    targetRevision: HEAD # Track the HEAD of the main/master branch
+    path: infrastructure/storage # Point to the directory containing the manifest
+    # We are using a raw manifest, not Helm or Kustomize
+    directory:
+      recurse: false # Only look for manifests directly in the 'path'
+      # jsonnet: {} # Not using Jsonnet
+      # helm: {} # Not using Helm for this one
+  destination:
+    # Deploy the resources into the cluster where Argo CD is running
+    server: https://kubernetes.default.svc
+    # The namespace is defined within the manifest itself (local-path-storage)
+    # We don't need to specify it here, but could if the manifest didn't define it.
+    # namespace: local-path-storage
+  syncPolicy:
+    automated:
+      prune: true # Delete resources that are no longer defined in Git
+      selfHeal: true # Automatically sync if the live state drifts from Git
+    syncOptions:
+      - CreateNamespace=true # Allow Argo CD to create the namespace if it doesn't exist

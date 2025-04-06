@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd # Deploy this Application resource into the argocd namespace
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # Source for the Vault Helm chart
+    repoURL: https://helm.releases.hashicorp.com
+    chart: vault
+    targetRevision: 0.27.0 # Specify a stable chart version (check for latest)
+
+    # Point Argo CD to the values file within *your* Git repository
+    helm:
+      valueFiles:
+        # Path relative to the root of *your* Git repo
+        - $values/infrastructure/secrets/vault/helm-values.yaml
+
+  # Override the source repo for the values file location
+  # This tells Argo CD where to find the helm-values.yaml file
+  # IMPORTANT: Replace with your actual Git repo URL
+  sources:
+    - repoURL: https://github.com/YOUR_USERNAME/YOUR_HOMELAB_REPO.git
+      targetRevision: HEAD
+      ref: values # Reference name for the values repo source
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault # Deploy Vault into the 'vault' namespace (as defined in values)
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true # Allow Argo CD to create the namespace

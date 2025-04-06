@@ -1,0 +1,80 @@
+# Helm Values for Argo CD
+# Chart Source: https://argoproj.github.io/argo-helm
+# Chart Version: (Specify a version later if needed, e.g., 5.51.5)
+
+# Deploy into the 'argocd' namespace
+namespace: argocd
+createNamespace: true
+
+# --- Argo CD Server Configuration ---
+server:
+  # Expose the Argo CD server UI/API
+  service:
+    type: LoadBalancer # Easiest for Docker Desktop local access
+    # type: NodePort # Alternative if LoadBalancer doesn't work
+    # type: ClusterIP # Requires manual port-forwarding
+    port: 80 # Expose HTTP on port 80
+    # httpsPort: 443 # HTTPS can be configured later if needed
+
+  # Persistence for server component (optional but recommended)
+  # persistence:
+  #   enabled: true
+  #   storageClass: local-path
+  #   size: 8Gi
+
+  # Insecure mode (allow HTTP) - useful for initial local setup without TLS
+  insecure: true
+
+# --- Argo CD Repo Server Configuration ---
+repoServer:
+  # Persistence for repo server cache
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+
+# --- Argo CD Application Controller Configuration ---
+controller:
+  # Persistence for controller state
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 2Gi
+
+# --- ApplicationSet Controller ---
+# Useful for advanced application management patterns
+applicationSet:
+  enabled: true
+  # Persistence for ApplicationSet controller
+  # persistence:
+  #   enabled: true
+  #   storageClass: local-path
+  #   size: 2Gi
+
+# --- Notifications Controller ---
+# Disable for initial simplicity
+notifications:
+  enabled: false
+
+# --- Dex Server (Built-in OIDC provider) ---
+# Disable for initial simplicity, can integrate with external OIDC/SAML later
+dex:
+  enabled: false
+  # persistence:
+  #   enabled: true
+  #   storageClass: local-path
+  #   size: 1Gi
+
+# --- Redis HA ---
+# Use bundled non-HA Redis for simplicity
+redis-ha:
+  enabled: false
+
+# --- Initial Admin Secret ---
+# Let Argo CD create the initial secret. Retrieve password manually after install.
+# Avoid setting passwords directly in values for GitOps.
+configs:
+  secret:
+    createSecret: true # Ensure the argocd-initial-admin-secret is created
+    # initialAdminPassword: "..." # DO NOT SET HERE
+    # initialAdminPasswordMtime: "..." # DO NOT SET HERE

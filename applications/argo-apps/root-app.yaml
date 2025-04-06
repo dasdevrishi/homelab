@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app-of-apps
+  namespace: argocd # Deploy this Application resource into the argocd namespace
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # Point to the directory containing all other Application manifests
+    repoURL: https://github.com/YOUR_USERNAME/YOUR_HOMELAB_REPO.git # <-- IMPORTANT: Replace with your actual Git repo URL
+    targetRevision: HEAD
+    path: applications/argo-apps
+    # Use directory recursion to find all YAML files in the path
+    directory:
+      recurse: true
+      # exclude: 'root-app.yaml' # Optional: prevent managing itself directly if preferred
+
+  destination:
+    # Deploy the Applications themselves into the cluster where Argo CD is running
+    server: https://kubernetes.default.svc
+    # Applications should define their own destination namespaces,
+    # but this Application resource itself lives in 'argocd'
+    namespace: argocd
+
+  syncPolicy:
+    automated:
+      prune: true # Delete Applications that are removed from Git
+      selfHeal: true # Recreate Applications if they are deleted manually
+    # syncOptions:
+      # - CreateNamespace=true # Usually not needed for the root app itself

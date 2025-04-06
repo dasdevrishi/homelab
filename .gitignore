@@ -1,0 +1,24 @@
+# Local development files
+*.local
+*.log
+.DS_Store
+
+# Secrets (should be managed by Vault/ESO, not committed)
+secrets.yaml
+secrets.yml
+*.secret
+
+# Helm / Kustomize temporary files
+charts/
+tmp/
+*~
+*.swp
+
+# Terraform state
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Vault unseal keys / root token (NEVER COMMIT THESE)
+vault-keys.json
+vault-root-token.txt
