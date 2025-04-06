@@ -1,8 +1,0 @@
-# values.yaml for Argo CD Helm chart
-
-# Reference: https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml
-
-server:
-  # Expose the Argo CD server service via NodePort for local k3d access
-  service:
-    type: NodePort 
