@@ -10,6 +10,8 @@ spec:
     repoURL: https://github.com/dasdevrishi/homelab.git
     targetRevision: HEAD
     path: monitoring
+    kustomize:
+      buildOptions: --enable-helm
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
